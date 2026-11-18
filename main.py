@@ -78,7 +78,7 @@ def Mk(B,e,S,h,m):
  return X(B2),W(e2) if e2>=0 else-1,-(S+d),h2
 T={};KL={};C=[0];BUD=100000;H=set()
 class E(Exception):pass
-def S(B,e,V,h,d,a,b,p):
+def S(B,e,V,h,d,a,b,p,n):
  C[0]+=1
  if C[0]>BUD:raise E
  if(B,e)in H:return 0
@@ -90,6 +90,7 @@ def S(B,e,V,h,d,a,b,p):
   if x[1]==2 and x[2]<=a:return x[2]
  c=A(B,B.index('K'))
  if c:d+=1
+ elif n and d>=3 and h>=320 and -S(X(B),-1,-V,h,d-3,-b,-b+1,p+1,0)>=b:return b
  g=G(B,e);k1,k2=KL.get(p,(0,0))
  def o(m):
   if x and m==x[3]:return 1<<30
@@ -107,9 +108,9 @@ def S(B,e,V,h,d,a,b,p):
   if r is None:continue
   B2,e2,V2,h2=r
   if i>3 and d>=3 and B[m[1]]=='.'and m[1]!=e and not m[2]and not c:
-   s=-S(B2,e2,V2,h2,d-2,-b,-a,p+1)
-   if s>a:s=-S(B2,e2,V2,h2,d-1,-b,-a,p+1)
-  else:s=-S(B2,e2,V2,h2,d-1,-b,-a,p+1)
+   s=-S(B2,e2,V2,h2,d-2,-b,-a,p+1,n)
+   if s>a:s=-S(B2,e2,V2,h2,d-1,-b,-a,p+1,n)
+  else:s=-S(B2,e2,V2,h2,d-1,-b,-a,p+1,n)
   if s>be:be=s;bm=m
   if s>a:a=s
   if a>=b:
@@ -150,7 +151,7 @@ def R(B,e,V,h,lg):
     r=Mk(B,e,V,h,u)
     if r is None:continue
     B2,e2,V2,h2=r
-    s=-S(B2,e2,V2,h2,d-1,-1000000,-a,1)
+    s=-S(B2,e2,V2,h2,d-1,-1000000,-a,1,1)
     if s>na:na=s;nb=u
     if s>a:a=s
    if nb is not None:bm=nb
