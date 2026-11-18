@@ -14,7 +14,10 @@ def P(p,s):
  if p=='B':return 4*c-8
  if p=='R':return(15 if r==6 else 0)+(5 if r==0 and f in(3,4)else 0)
  if p=='Q':return 2*c-6
- return(20,25,10,0,0,10,25,20)[f] if r==0 else max(-50,-15*r)
+ return 0
+def KP(s,h):
+ r=9-s//10;f=s%10-1;c=(f if f<4 else 7-f)+(r if r<4 else 7-r);g=(20,25,10,0,0,10,25,20)[f] if r==0 else max(-50,-15*r)
+ return(g*h+(8*c-24)*(6400-h))//6400
 def A(B,s):
  if B[s-9]=='p'or B[s-11]=='p':return 1
  for d in(-21,-19,-12,-8,8,12,19,21):
@@ -59,7 +62,7 @@ def G(B,e):
   if B[91]=='R'and B[92]=='.'and B[93]=='.'and B[94]=='.'and not A(B,94)and not A(B,93):m.append((95,93,0))
  return m
 def st(B,i,c):return B[:i]+c+B[i+1:]
-def Mk(B,e,S,m):
+def Mk(B,e,S,h,m):
  f,t,q=m;p=B[f];v=B[t]
  d=P(p,t)-P(p,f) if not q else M[q]+P(q,t)-100-P('P',f)
  if v!='.':d+=M[v.upper()]+P(v,t)
@@ -71,14 +74,15 @@ def Mk(B,e,S,m):
   else:B2=st(st(B2,91,'.'),94,'R');d+=P('R',94)-P('R',91)
  if A(B2,t if p=='K'else B2.index('K')):return None
  e2=f-10 if p=='P'and t==f-20 else-1
- return X(B2),W(e2) if e2>=0 else-1,-(S+d)
-T={};KL={};C=[0];BUD=40000;H=set()
+ h2=h+(M[q]if q else 0)-(M[v.upper()]if v not in'.Pp'else 0)
+ return X(B2),W(e2) if e2>=0 else-1,-(S+d),h2
+T={};KL={};C=[0];BUD=100000;H=set()
 class E(Exception):pass
-def S(B,e,V,d,a,b,p):
+def S(B,e,V,h,d,a,b,p):
  C[0]+=1
  if C[0]>BUD:raise E
  if(B,e)in H:return 0
- if d<=0:return Q(B,e,V,a,b,24,p)
+ if d<=0:return Q(B,e,V,h,a,b,24,p)
  k=(B,e);x=T.get(k)
  if x and x[0]>=d:
   if x[1]==0:return x[2]
@@ -99,13 +103,13 @@ def S(B,e,V,d,a,b,p):
  g.sort(key=o,reverse=True)
  a0=a;be=-1000000;bm=None
  for i,m in enumerate(g):
-  r=Mk(B,e,V,m)
+  r=Mk(B,e,V,h,m)
   if r is None:continue
-  B2,e2,V2=r
+  B2,e2,V2,h2=r
   if i>3 and d>=3 and B[m[1]]=='.'and m[1]!=e and not m[2]and not c:
-   s=-S(B2,e2,V2,d-2,-b,-a,p+1)
-   if s>a:s=-S(B2,e2,V2,d-1,-b,-a,p+1)
-  else:s=-S(B2,e2,V2,d-1,-b,-a,p+1)
+   s=-S(B2,e2,V2,h2,d-2,-b,-a,p+1)
+   if s>a:s=-S(B2,e2,V2,h2,d-1,-b,-a,p+1)
+  else:s=-S(B2,e2,V2,h2,d-1,-b,-a,p+1)
   if s>be:be=s;bm=m
   if s>a:a=s
   if a>=b:
@@ -114,10 +118,10 @@ def S(B,e,V,d,a,b,p):
  if bm is None:return-100000+p if c else 0
  if abs(be)<90000:T[k]=(d,0 if be>a0 and be<b else(1 if be>=b else 2),be,bm)
  return be
-def Q(B,e,V,a,b,q,p):
+def Q(B,e,V,h,a,b,q,p):
  C[0]+=1
  if C[0]>BUD:raise E
- s=V+(30 if B.count('B')>1 else 0)-(30 if B.count('b')>1 else 0)
+ s=V+KP(B.index('K'),h)-KP(W(B.index('k')),h)+(30 if B.count('B')>1 else 0)-(30 if B.count('b')>1 else 0)
  if s>=b:return b
  if s>a:a=s
  if q<=0:return a
@@ -127,15 +131,15 @@ def Q(B,e,V,a,b,q,p):
  g.sort(key=lambda m:(10*M[B[m[1]].upper()]if B[m[1]]!='.'else 0)+(M[m[2]]if m[2]else 0),reverse=True)
  f=0
  for m in g:
-  r=Mk(B,e,V,m)
+  r=Mk(B,e,V,h,m)
   if r is None:continue
-  f=1;B2,e2,V2=r
-  s=-Q(B2,e2,V2,-b,-a,q-1,p+1)
+  f=1;B2,e2,V2,h2=r
+  s=-Q(B2,e2,V2,h2,-b,-a,q-1,p+1)
   if s>a:a=s
   if a>=b:return b
  if c and not f:return-100000+p
  return a
-def R(B,e,V,lg):
+def R(B,e,V,h,lg):
  C[0]=0
  if len(T)>200000:T.clear()
  bm=lg[0];H.add((B,e))
@@ -143,10 +147,10 @@ def R(B,e,V,lg):
   for d in range(1,99):
    nb=None;na=-1000000;a=-1000000
    for u in sorted(lg,key=lambda u:u!=bm):
-    r=Mk(B,e,V,u)
+    r=Mk(B,e,V,h,u)
     if r is None:continue
-    B2,e2,V2=r
-    s=-S(B2,e2,V2,d-1,-1000000,-a,1)
+    B2,e2,V2,h2=r
+    s=-S(B2,e2,V2,h2,d-1,-1000000,-a,1)
     if s>na:na=s;nb=u
     if s>a:a=s
    if nb is not None:bm=nb
@@ -158,11 +162,11 @@ def F(fen):
  B=' '*20+''.join(' '+''.join('.'*int(c) if c.isdigit()else c for c in r)+' ' for r in p[0].split('/'))+' '*20
  e=-1
  if p[3]!='-':e=91-10*(int(p[3][1])-1)+ord(p[3][0])-97
- S=0
+ S=0;h=0
  for i,ch in enumerate(B):
-  if ch.isalpha():S+=(M[ch.upper()]+P(ch,i))*(1 if ch.isupper()else-1)
+  if ch.isalpha():S+=(M[ch.upper()]+P(ch,i))*(1 if ch.isupper()else-1);h+=M[ch.upper()]if ch.upper()in'NBRQ'else 0
  if p[1]=='b':B=X(B);S=-S;e=W(e) if e>=0 else-1
- return B,e,S
+ return B,e,S,h
 def sq(s):return 91-10*(int(s[1])-1)+ord(s[0])-97
 def post(x,y):
  q=u.Request(U+x,data=json.dumps(y).encode(),headers={'content-type':'application/json'})
@@ -176,11 +180,11 @@ if __name__=='__main__':
   if g['status']=='done':break
   while g['status']=='your_move':
    if g['game']!=cg:H=set();cg=g['game']
-   B,e,S=F(g['fen'])
+   B,e,V,h=F(g['fen'])
    c=W if g['fen'].split()[1]=='b' else lambda s:s
    us=g['legal_moves'];ms=[(c(sq(m[:2])),c(sq(m[2:4])),m[4].upper()if len(m)>4 else 0)for m in us]
-   mv=ms[0] if len(ms)==1 else R(B,e,S,ms)
-   r=Mk(B,e,S,mv)
+   mv=ms[0] if len(ms)==1 else R(B,e,V,h,ms)
+   r=Mk(B,e,V,h,mv)
    if r is not None:H.add((B,e));H.add((r[0],r[1]))
    g=post('/move',{'game':g['game'],'move':us[ms.index(mv)]})
   print(f"game {g['game']}: {g['outcome']} by {g['reason']}",file=sys.stderr)
