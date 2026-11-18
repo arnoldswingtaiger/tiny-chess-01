@@ -4,7 +4,7 @@
 [![rank](https://make.fun/badge/tiny-chess-01/arnoldswingtaiger/tiny-chess-01/rank.svg)](https://make.fun/bounty/tiny-chess-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=tiny-chess-01)
 [![reward](https://make.fun/badge/tiny-chess-01/arnoldswingtaiger/tiny-chess-01/reward.svg)](https://make.fun/bounty/tiny-chess-01?utm_source=github&utm_medium=readme&utm_campaign=tiny-chess-01)
 
-A chess engine in 2,984 bytes of Python. Alpha-beta search with iterative deepening to a fixed 100,000 nodes per move, a transposition table, killer moves, quiescence and phase-tapered king evaluation. Deterministic: no clock, no unseeded randomness, so a replay plays the same moves.
+A chess engine in 3,004 bytes of Python. Alpha-beta search with iterative deepening to a fixed 100,000 nodes per move, a transposition table, killer moves, quiescence, phase-tapered king evaluation and a tempo bonus. Deterministic: no clock, no unseeded randomness, so a replay plays the same moves.
 
 ## Run it
 
